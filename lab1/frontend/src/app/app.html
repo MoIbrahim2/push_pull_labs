@@ -1,0 +1,45 @@
+<div class="app-layout">
+  <!-- Top Navigation Bar -->
+  <header class="app-navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">🔄</span>
+      <span class="brand-name">Push/Pull Labs: Polling Demo</span>
+    </div>
+    
+    <nav class="nav-links">
+      <a routerLink="/short-polling" routerLinkActive="active-link" class="nav-item">
+        Short Polling Demo
+      </a>
+      <a routerLink="/long-polling" routerLinkActive="active-link" class="nav-item">
+        Long Polling Demo
+      </a>
+    </nav>
+    
+    <div class="nav-actions">
+      <span class="success-toast" *ngIf="successMessage">{{ successMessage }}</span>
+      <button (click)="resetDatabase()" class="btn-reset" [disabled]="isClearing">
+        🗑️ {{ isClearing ? 'Clearing...' : 'Reset Database' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Core Comparison Hero Banner -->
+  <section class="info-hero">
+    <div class="hero-content">
+      <h2>Short Polling vs. Long Polling</h2>
+      <p>
+        Compare how HTTP clients pull information from a server. Open two tabs side-by-side (or open the Network tab in your browser's Developer Tools) to see the request intervals and pending connections in action.
+      </p>
+    </div>
+  </section>
+
+  <!-- Router Outlet Container -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Page Footer -->
+  <footer class="app-footer">
+    <p>Push/Pull Labs &copy; 2026. Made with Angular & Express.</p>
+  </footer>
+</div>

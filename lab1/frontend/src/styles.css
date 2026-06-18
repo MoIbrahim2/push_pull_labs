@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* --- CSS VARIABLES & TOKENS --- */
+:root {
+  --bg-color: #0b0f19;
+  --bg-card: rgba(22, 30, 49, 0.65);
+  --border-color: rgba(255, 255, 255, 0.06);
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --text-dark-muted: #6b7280;
+  
+  --violet: #8b5cf6;
+  --violet-hover: #7c3aed;
+  --violet-glow: rgba(139, 92, 246, 0.35);
+  
+  --teal: #14b8a6;
+  --teal-hover: #0d9488;
+  --teal-glow: rgba(20, 184, 166, 0.35);
+  
+  --red: #ef4444;
+  --yellow: #fbbf24;
+  --green: #10b981;
+  --blue: #3b82f6;
+}
+
+/* --- RESET & BASE --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- APP LAYOUT --- */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* --- NAVBAR --- */
+.app-navbar {
+  background: rgba(11, 15, 25, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.025em;
+  background: linear-gradient(to right, #a78bfa, #2dd4bf);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-item.active-link {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.success-toast {
+  font-size: 0.8rem;
+  color: var(--green);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease;
+}
+
+.btn-reset {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-reset:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.btn-reset:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- HERO BANNER --- */
+.info-hero {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 30px 24px;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-content h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.hero-content p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* --- FOOTER --- */
+.app-footer {
+  border-top: 1px solid var(--border-color);
+  padding: 24px;
+  text-align: center;
+  color: var(--text-dark-muted);
+  font-size: 0.8rem;
+}
+
+/* --- CARDS & PANELS --- */
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.3s;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+/* --- BUTTONS --- */
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-violet {
+  background-color: var(--violet);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--violet-glow);
+}
+
+.btn-violet:hover:not(:disabled) {
+  background-color: var(--violet-hover);
+  transform: translateY(-1px);
+}
+
+.btn-teal {
+  background-color: var(--teal);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--teal-glow);
+}
+
+.btn-teal:hover:not(:disabled) {
+  background-color: var(--teal-hover);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* --- UTILITIES & SCROLLBAR --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ANIMATED COUNT INCREASE --- */
+.animate-count {
+  animation: scaleBounce 0.3s ease;
+}
+
+@keyframes scaleBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
