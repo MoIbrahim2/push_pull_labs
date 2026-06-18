@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PostsService } from './services/posts.service';
@@ -15,26 +15,31 @@ export class App {
   isClearing = false;
   successMessage = '';
 
-  constructor(private postsService: PostsService) {}
+  constructor(private postsService: PostsService, private cdr: ChangeDetectorRef) {}
 
   resetDatabase() {
     if (this.isClearing) return;
     this.isClearing = true;
     this.successMessage = '';
+    this.cdr.markForCheck();
 
     this.postsService.clearPosts().subscribe({
       next: () => {
         this.isClearing = false;
         this.successMessage = 'Database cleared! Waiting connections updated.';
+        this.cdr.markForCheck();
         setTimeout(() => {
           this.successMessage = '';
+          this.cdr.markForCheck();
         }, 3000);
       },
       error: (err) => {
         this.isClearing = false;
+        this.cdr.markForCheck();
         console.error('Failed to clear database:', err);
       }
     });
   }
 }
+
 

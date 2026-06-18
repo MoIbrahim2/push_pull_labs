@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostsService, Post } from '../services/posts.service';
@@ -504,7 +504,7 @@ export class LongPolling implements OnInit, OnDestroy {
 
   private pollSubscription: Subscription | null = null;
 
-  constructor(private postsService: PostsService) {}
+  constructor(private postsService: PostsService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.addLogEntry('Long polling page loaded. Initializing recursive poll sequence.');
@@ -531,6 +531,7 @@ export class LongPolling implements OnInit, OnDestroy {
    */
   fetchInitialState() {
     this.statusText = 'Fetching current database state...';
+    this.cdr.markForCheck();
     this.postsService.getPosts().subscribe({
       next: (data) => {
         this.posts = data;
@@ -538,12 +539,14 @@ export class LongPolling implements OnInit, OnDestroy {
           this.lastUpdatedText = new Date().toLocaleTimeString();
         }
         this.addLogEntry(`Initial sync loaded ${data.length} post(s)`);
+        this.cdr.markForCheck();
         
         // Start recursive long polling
         this.startLongPolling();
       },
       error: (err) => {
         this.addLogEntry('Initial database sync failed: ' + err.message);
+        this.cdr.markForCheck();
         // Start long polling anyway
         this.startLongPolling();
       }
@@ -559,6 +562,7 @@ export class LongPolling implements OnInit, OnDestroy {
     if (!this.isPollingActive) return;
 
     this.requestCount++;
+    this.cdr.markForCheck();
     const reqNum = this.requestCount;
     this.isWaitingOnServer = true;
     this.statusText = 'Waiting (Connection Open)';
@@ -574,6 +578,7 @@ export class LongPolling implements OnInit, OnDestroy {
         
         this.addLogEntry(`GET /long/posts (Req #${reqNum}) resolved by server`, 'get', '200 OK', 'status-200', `Received ${data.length} posts`);
         this.statusText = 'Response Received!';
+        this.cdr.markForCheck();
 
         // Recurse immediately to re-open the long poll connection
         this.startLongPolling();
@@ -586,6 +591,7 @@ export class LongPolling implements OnInit, OnDestroy {
 
         this.addLogEntry(`GET /long/posts (Req #${reqNum}) failed / timed out`, 'get', 'ERROR', 'status-error', err.message);
         this.statusText = 'Error. Retrying...';
+        this.cdr.markForCheck();
         
         // Wait 3 seconds to throttle in case of connection outage, then re-poll
         setTimeout(() => {
@@ -606,6 +612,7 @@ export class LongPolling implements OnInit, OnDestroy {
     this.isSubmitting = true;
     const title = this.newPostTitle.trim();
     this.newPostTitle = '';
+    this.cdr.markForCheck();
 
     this.addLogEntry(`POST /long/post (creating: "${title}") sent...`, 'post');
 
@@ -613,12 +620,14 @@ export class LongPolling implements OnInit, OnDestroy {
       next: (createdPost) => {
         this.isSubmitting = false;
         this.addLogEntry(`POST /long/post success`, 'post', '201 Created', 'status-201', `ID: ${createdPost._id}`);
+        this.cdr.markForCheck();
         // Note: The UI posts array and request logs will update instantly through the
         // GET /long/posts subscription resolving!
       },
       error: (err) => {
         this.isSubmitting = false;
         this.addLogEntry(`POST /long/post failed`, 'post', 'ERROR', 'status-error', err.message);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -650,6 +659,7 @@ export class LongPolling implements OnInit, OnDestroy {
   clearLogs() {
     this.logs = [];
     this.addLogEntry('Logs cleared by user.');
+    this.cdr.markForCheck();
   }
 
   trackPostById(index: number, post: Post): string {

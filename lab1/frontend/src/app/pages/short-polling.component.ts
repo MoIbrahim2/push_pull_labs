@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostsService, Post } from '../services/posts.service';
@@ -502,7 +502,7 @@ export class ShortPolling implements OnInit, OnDestroy {
 
   private pollIntervalId: any = null;
 
-  constructor(private postsService: PostsService) {}
+  constructor(private postsService: PostsService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.addLogEntry('Short polling initialized. Setting up interval timer...');
@@ -536,6 +536,7 @@ export class ShortPolling implements OnInit, OnDestroy {
   fetchPosts(isInitial = false) {
     this.isFetching = true;
     this.requestCount++;
+    this.cdr.markForCheck();
     const reqNum = this.requestCount;
     
     this.addLogEntry(`GET /posts (Req #${reqNum}) sent...`, 'get');
@@ -559,10 +560,12 @@ export class ShortPolling implements OnInit, OnDestroy {
         const now = new Date();
         this.lastCheckedText = now.toLocaleTimeString();
         this.addLogEntry(`GET /posts (Req #${reqNum}) completed`, 'get', '200 OK', 'status-200', info);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.isFetching = false;
         this.addLogEntry(`GET /posts (Req #${reqNum}) failed`, 'get', 'ERROR', 'status-error', err.message);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -576,6 +579,7 @@ export class ShortPolling implements OnInit, OnDestroy {
     this.isSubmitting = true;
     const title = this.newPostTitle.trim();
     this.newPostTitle = '';
+    this.cdr.markForCheck();
 
     this.addLogEntry(`POST /post (creating: "${title}") sent...`, 'post');
 
@@ -583,6 +587,7 @@ export class ShortPolling implements OnInit, OnDestroy {
       next: (createdPost) => {
         this.isSubmitting = false;
         this.addLogEntry(`POST /post success`, 'post', '201 Created', 'status-201', `ID: ${createdPost._id}`);
+        this.cdr.markForCheck();
         // Note: We do NOT force a fetch here, because the Short Polling mechanism 
         // will pick up the update automatically in its next 3-second cycle!
         // This visual delay helps demonstrate how short polling functions.
@@ -590,6 +595,7 @@ export class ShortPolling implements OnInit, OnDestroy {
       error: (err) => {
         this.isSubmitting = false;
         this.addLogEntry(`POST /post failed`, 'post', 'ERROR', 'status-error', err.message);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -622,6 +628,7 @@ export class ShortPolling implements OnInit, OnDestroy {
   clearLogs() {
     this.logs = [];
     this.addLogEntry('Logs cleared by user.');
+    this.cdr.markForCheck();
   }
 
   trackPostById(index: number, post: Post): string {
