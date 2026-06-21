@@ -1,0 +1,101 @@
+<div class="chat-app">
+  <!-- Sidebar -->
+  <div class="sidebar glass-panel">
+    <div class="sidebar-header">
+      <div class="user-info">
+        <div class="avatar">{{ currentUser?.username?.charAt(0) | uppercase }}</div>
+        <span class="username">{{ currentUser?.username }}</span>
+      </div>
+      <button class="icon-btn" (click)="logout()" title="Logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      </button>
+    </div>
+
+    <div class="sidebar-tabs">
+      <button [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">Users</button>
+      <button [class.active]="activeTab === 'groups'" (click)="activeTab = 'groups'">Groups</button>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- Users List -->
+      <ng-container *ngIf="activeTab === 'users'">
+        <div class="list-item" *ngFor="let user of users" (click)="selectUser(user)" [class.active]="chatType === 'private' && selectedChat?._id === user._id">
+          <div class="avatar user-avatar">{{ user.username.charAt(0) | uppercase }}</div>
+          <div class="item-details">
+            <span class="item-name">{{ user.username }}</span>
+            <span class="item-sub">{{ user.email }}</span>
+          </div>
+        </div>
+        <div class="empty-list" *ngIf="users.length === 0">No other users yet.</div>
+      </ng-container>
+
+      <!-- Groups List -->
+      <ng-container *ngIf="activeTab === 'groups'">
+        <div class="create-group-section">
+          <button class="btn-secondary w-100" *ngIf="!showCreateGroup" (click)="showCreateGroup = true">+ New Group</button>
+          <div *ngIf="showCreateGroup" class="create-group-form">
+            <input type="text" class="form-control" placeholder="Group Name" [(ngModel)]="newGroupName">
+            <div class="action-buttons">
+              <button class="btn-primary" (click)="createGroup()">Create</button>
+              <button class="btn-text" (click)="showCreateGroup = false">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="list-item" *ngFor="let group of groups" (click)="selectGroup(group)" [class.active]="chatType === 'group' && selectedChat?._id === group._id">
+          <div class="avatar group-avatar">G</div>
+          <div class="item-details">
+            <span class="item-name">{{ group.name }}</span>
+            <span class="item-sub">{{ group.members?.length || 0 }} members</span>
+          </div>
+        </div>
+        <div class="empty-list" *ngIf="groups.length === 0 && !showCreateGroup">No groups yet.</div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Main Chat Area -->
+  <div class="main-chat">
+    <ng-container *ngIf="selectedChat; else noSelection">
+      <div class="chat-header glass-panel">
+        <div class="avatar" [ngClass]="chatType === 'group' ? 'group-avatar' : 'user-avatar'">
+          {{ (chatType === 'group' ? 'G' : selectedChat.username?.charAt(0)) | uppercase }}
+        </div>
+        <div class="header-details">
+          <h3>{{ chatType === 'group' ? selectedChat.name : selectedChat.username }}</h3>
+          <p *ngIf="chatType === 'group'">{{ selectedChat.members?.length || 0 }} members</p>
+        </div>
+      </div>
+
+      <div class="messages-container" #scrollMe>
+        <div class="message-wrapper" *ngFor="let msg of messages" [class.is-mine]="msg.sender._id === currentUser?._id">
+          <div class="message-sender" *ngIf="chatType === 'group' && msg.sender._id !== currentUser?._id">
+            {{ msg.sender.username }}
+          </div>
+          <div class="message-bubble">
+            {{ msg.content }}
+            <span class="message-time">{{ msg.createdAt | date:'shortTime' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input glass-panel">
+        <form (ngSubmit)="sendMessage()" class="input-form">
+          <input type="text" class="form-control" placeholder="Type a message..." [(ngModel)]="newMessage" name="newMessage" autocomplete="off">
+          <button type="submit" class="btn-send" [disabled]="!newMessage.trim()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </form>
+      </div>
+    </ng-container>
+
+    <ng-template #noSelection>
+      <div class="empty-chat">
+        <div class="empty-illustration">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <h2>WhatsApp Clone</h2>
+        <p>Select a user or group to start chatting</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
